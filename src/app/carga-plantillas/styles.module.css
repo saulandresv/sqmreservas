@@ -1,0 +1,215 @@
+/* Variables de colores */
+:root {
+    --azul-oscuro: rgba(0, 51, 160, 1);
+    --azul-medio: rgba(0, 51, 159, 1);
+    --verde-claro: rgba(189, 218, 119, 1);
+    --amarillo-verdoso-claro: rgba(213, 230, 160, 1);
+    --amarillo-verdoso-medio: rgba(214, 229, 160, 1);
+    --verde-claro-adicional: rgba(190, 218, 116, 1);
+}
+
+/* Fondo global y tipografía */
+body {
+    font-family: 'Poppins', sans-serif; /* Importada desde Google Fonts */
+    color: var(--azul-oscuro);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9; /* Fondo claro para contraste */
+}
+
+/* Contenedor Principal */
+.container {
+    position: relative;
+    max-width: 800px;
+    width: 90%;
+    padding: 20px;
+    background-color: var(--amarillo-verdoso-medio); /* Fondo con color corporativo */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Esferas decorativas */
+.container::before,
+.container::after {
+    content: '';
+    position: absolute;
+    z-index: -1; /* Colocar detrás del contenedor */
+    border-radius: 50%;
+    opacity: 0.8;
+}
+
+.container::before {
+    width: 150px;
+    height: 150px;
+    background: var(--azul-medio);
+    top: -70px;
+    left: -70px;
+}
+
+.container::after {
+    width: 150px;
+    height: 150px;
+    background: var(--verde-claro);
+    bottom: -70px;
+    right: -70px;
+}
+
+/* Título */
+.title {
+    text-align: center;
+    color: var(--azul-oscuro);
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Área de arrastrar y soltar */
+.dropArea {
+    border: 2px dashed var(--azul-medio);
+    background: #f5f5f5; /* Fondo neutral */
+    color: var(--azul-oscuro);
+    padding: 20px;
+    width: 100%;
+    height: 200px;
+    text-align: center;
+    transition: background-color 0.3s, border-color 0.3s;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.dropArea p {
+    margin: 0;
+    font-size: 18px;
+    color: var(--azul-oscuro);
+}
+
+.dropArea.dragOver {
+    background-color: var(--amarillo-verdoso-claro); /* Fondo amarillo claro */
+    border-color: var(--azul-medio);
+    color: var(--azul-oscuro);
+}
+
+/* Botón de carga */
+.uploadButton {
+    background-color: var(--azul-oscuro);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border: none;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.uploadButton:hover {
+    background-color: var(--azul-medio);
+    transform: scale(1.05);
+}
+
+.uploadButton input[type="file"] {
+    display: none;
+}
+
+/* Resumen de Carga */
+.summarySection {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid var(--amarillo-verdoso-medio);
+}
+
+.successCount {
+    color: var(--verde-claro);
+    font-weight: bold;
+}
+
+.errorCount {
+    color: var(--azul-medio);
+    font-weight: bold;
+}
+
+/* Previsualización */
+.previewSection {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid var(--azul-medio);
+}
+
+.previewTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.previewTable th,
+.previewTable td {
+    border: 1px solid var(--azul-medio);
+    padding: 8px;
+    text-align: left;
+}
+
+.previewTable th {
+    background-color: var(--azul-medio);
+    font-weight: bold;
+    color: white;
+}
+
+/* Validaciones Básicas */
+.validationSection {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px solid var(--azul-medio);
+}
+
+.validationSection li {
+    color: var(--azul-oscuro);
+    margin-bottom: 10px;
+}
+
+/* Botones */
+.submitSection {
+    display: flex;
+    justify-content: space-between;
+}
+
+.submitButton, .errorButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.3s, background-color 0.3s;
+    width: 48%;
+}
+
+.submitButton {
+    background-color: var(--verde-claro);
+    color: var(--azul-oscuro);
+}
+
+.submitButton:hover {
+    background-color: var(--verde-claro-adicional);
+    transform: scale(1.05);
+}
+
+.errorButton {
+    background-color: var(--azul-medio);
+    color: white;
+}
+
+.errorButton:hover {
+    background-color: var(--azul-oscuro);
+    transform: scale(1.05);
+}
