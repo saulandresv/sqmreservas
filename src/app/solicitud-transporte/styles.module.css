@@ -1,0 +1,251 @@
+/* Variables de colores */
+:root {
+  --azul-oscuro: rgba(0, 51, 160, 1); /* #0033a0 */
+  --azul-medio: rgba(0, 51, 159, 1); /* #00339f */
+  --verde-claro: rgba(189, 218, 119, 1); /* #bdda77 */
+  --amarillo-verdoso-claro: rgba(213, 230, 160, 1); /* #d5e6a0 */
+  --amarillo-verdoso-medio: rgba(214, 229, 160, 1); /* #d6e5a0 */
+  --verde-claro-adicional: rgba(190, 218, 116, 1); /* #beda74 */
+  --secondary-color: rgba(231, 76, 60, 1); /* #e74c3c */
+  --success-color: rgba(39, 174, 96, 1); /* #27ae60 */
+  --neutral-color: rgba(245, 245, 245, 1); /* #f5f5f5 */
+  --text-color: #333333; /* #333 */
+}
+
+/* Fondo global y tipografía */
+body {
+  font-family: 'Poppins', sans-serif; /* Importada desde Google Fonts */
+  color: var(--azul-oscuro);
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Asegura que el contenedor no toque el tope de la pantalla */
+  background-color: #f9f9f9; /* Fondo claro para contraste */
+  overflow-x: hidden; /* Evitar desbordamiento horizontal */
+  padding-top: 2cm; /* Espacio de 2 cm desde la barra de búsqueda */
+}
+
+/* Contenedor Principal */
+.container {
+  position: relative;
+  max-width: 900px;
+  width: 100%;
+  padding: 20px;
+  background-color: var(--amarillo-verdoso-medio); /* Fondo con color corporativo */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeIn 0.5s ease-in-out;
+  box-sizing: border-box;
+  overflow: visible; /* Permitir que las esferas se muestren fuera del contenedor */
+  margin-top: 20px; /* Espacio adicional para asegurar separación */
+}
+
+/* Esferas decorativas */
+.container::before,
+.container::after {
+  content: '';
+  position: absolute;
+  z-index: -1; /* Colocar detrás del contenedor */
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.container::before {
+  width: 150px;
+  height: 150px;
+  background: var(--azul-medio);
+  top: -70px;
+  left: -70px;
+}
+
+.container::after {
+  width: 150px;
+  height: 150px;
+  background: var(--verde-claro);
+  bottom: -70px;
+  right: -70px;
+}
+
+/* Contenedor del calendario y las horas */
+.dateHourContainer {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap; /* Permitir que los elementos se envuelvan */
+}
+
+/* Estilo del calendario */
+.datePicker {
+  flex: 1;
+  min-width: 250px; /* Asegura que no se comprima demasiado */
+  border: 1px solid var(--azul-oscuro);
+  border-radius: 5px;
+  padding: 10px;
+  background-color: var(--neutral-color);
+  box-sizing: border-box;
+}
+
+/* Contenedor de horas */
+.hourContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 250px; /* Asegura que no se comprima demasiado */
+}
+
+/* Botones de horas */
+.hourButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.hourButton {
+  flex: 0 1 calc(33.333% - 10px); /* Tres botones por fila */
+  padding: 10px;
+  border: 1px solid var(--azul-oscuro);
+  border-radius: 5px;
+  background-color: var(--neutral-color);
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  box-sizing: border-box;
+}
+
+.hourButton:hover {
+  background-color: var(--verde-claro-adicional);
+  transform: scale(1.05);
+}
+
+.hourButton.selected {
+  background-color: var(--verde-claro);
+  color: var(--azul-oscuro);
+  font-weight: bold;
+}
+
+/* Título */
+.title {
+  text-align: center;
+  color: var(--azul-oscuro);
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Área de texto */
+.textArea {
+  resize: vertical;
+  min-height: 100px;
+  max-height: 300px;
+  border: 1px solid var(--azul-oscuro);
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Drop Area */
+.dropArea {
+  border: 2px dashed var(--azul-medio);
+  background: var(--neutral-color);
+  color: var(--azul-oscuro);
+  padding: 20px;
+  width: 100%;
+  height: 150px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.dropArea.dragOver {
+  background-color: var(--amarillo-verdoso-claro);
+}
+
+/* Botones */
+.submitSection {
+  display: flex;
+  justify-content: space-between;
+}
+
+.submitButton, .errorButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.3s, background-color 0.3s;
+  width: 48%;
+}
+
+.submitButton {
+  background-color: var(--verde-claro);
+  color: var(--azul-oscuro);
+}
+
+.submitButton:hover {
+  background-color: var(--verde-claro-adicional);
+  transform: scale(1.05);
+}
+
+.errorButton {
+  background-color: var(--azul-medio);
+  color: white;
+}
+
+.errorButton:hover {
+  background-color: var(--azul-oscuro);
+  transform: scale(1.05);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .dateHourContainer {
+    flex-direction: column;
+  }
+
+  .hourButton {
+    flex: 0 1 100%; /* Un botón por fila en pantallas pequeñas */
+  }
+
+  .container {
+    padding: 15px;
+    margin-top: 10px; /* Ajustar margen superior para pantallas más pequeñas */
+  }
+}
+
+@media (max-width: 480px) {
+  .datePicker,
+  .hourContainer {
+    min-width: 100%; /* Asegura que ocupen toda la fila en pantallas muy pequeñas */
+  }
+
+  .hourButton {
+    font-size: 12px; /* Reducir tamaño del texto en botones */
+  }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
