@@ -1,0 +1,229 @@
+/* Variables de colores */
+:root {
+  --azul-oscuro: rgba(0, 51, 160, 1); /* #0033a0 */
+  --azul-medio: rgb(1, 64, 200); /* #00339f */
+  --verde-claro: rgba(189, 218, 119, 1); /* #bdda77 */
+  --amarillo-verdoso-claro: rgba(213, 230, 160, 1); /* #d5e6a0 */
+  --amarillo-verdoso-medio: rgba(214, 229, 160, 1); /* #d6e5a0 */
+  --verde-claro-adicional: rgba(190, 218, 116, 1); /* #beda74 */
+  --secondary-color: rgba(231, 76, 60, 1); /* #e74c3c */
+  --success-color: rgba(39, 174, 96, 1); /* #27ae60 */
+  --neutral-color: rgba(245, 245, 245, 1); /* #f5f5f5 */
+  --text-color: #333333; /* #333 */
+}
+
+/* Fondo global y tipografía */
+body {
+  font-family: 'Poppins', sans-serif; /* Importada desde Google Fonts */
+  color: var(--azul-oscuro);
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #f9f9f9; /* Fondo claro para contraste */
+  overflow-x: hidden; /* Evitar desbordamiento horizontal */
+  padding-top: 2cm; /* Espacio de 2 cm desde la barra de búsqueda */
+}
+
+/* Contenedor Principal */
+.container {
+  position: relative;
+  max-width: 900px;
+  width: 100%;
+  padding: 20px;
+  background-color: var(--amarillo-verdoso-medio); /* Fondo corporativo */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeIn 0.5s ease-in-out;
+  box-sizing: border-box;
+  margin-top: 20px;
+}
+
+/* Esferas decorativas */
+.container::before,
+.container::after {
+  content: '';
+  position: absolute;
+  z-index: -1; /* Colocar detrás */
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.container::before {
+  width: 150px;
+  height: 150px;
+  background: var(--azul-medio);
+  top: -70px;
+  left: -70px;
+}
+
+.container::after {
+  width: 150px;
+  height: 150px;
+  background: var(--verde-claro);
+  bottom: -70px;
+  right: -70px;
+}
+
+/* Rango de Fechas */
+.rangeDateContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.rangeOptionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 50%; /* Limitar ancho */
+}
+
+.datePicker {
+  flex: 1;
+  border: 1px solid var(--azul-oscuro);
+  border-radius: 5px;
+  padding: 10px;
+  background-color: var(--neutral-color);
+  box-sizing: border-box;
+  min-width: 300px;
+}
+
+.datePicker.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Botones de rango de fechas */
+.toggleButton {
+  padding: 15px 30px; /* Botones más grandes */
+  border: 1px solid var(--azul-oscuro);
+  border-radius: 5px;
+  background-color: var(--neutral-color);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  color: var(--azul-oscuro);
+}
+
+.toggleButton.selected {
+  background-color: var(--azul-medio);
+  color: var(--azul-oscuro);
+  font-weight: bold;
+}
+
+.toggleButton:hover {
+  background-color: var(--amarillo-verdoso-claro);
+  transform: scale(1.05);
+}
+
+/* Texto explicativo */
+.infoText {
+  text-align: left;
+  margin-top: 10px;
+  line-height: 1.5;
+  color: var(--azul-oscuro);
+}
+
+/* Ajustes para mostrar los botones de tipos de dieta en columnas de 3 */
+.dietTypeGrid {
+  display: grid; /* Usar grid para organizar los botones */
+  grid-template-columns: repeat(3, 1fr); /* Tres columnas */
+  gap: 15px; /* Espaciado entre los botones */
+  justify-items: center; /* Centrar horizontalmente los botones */
+  align-items: center; /* Centrar verticalmente los botones */
+}
+
+/* Botones de tipos de dieta */
+.dietTypeButton {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  color: #1976d2; /* Texto blanco para mejor contraste */
+  border: 1px solid var(--azul-oscuro);
+  background-color: var(--verde-claro); /* Fondo predeterminado */
+  border-radius: 5px;
+  padding: 20px;
+  transition: all 0.3s ease-in-out;
+  text-align: center; /* Centrar el texto del botón */
+}
+
+/* Hover en botones */
+.dietTypeButton:hover {
+  background-color: var(--azul-medio); /* Azul oscuro al pasar el mouse */
+  color: var(--neutral-color); /* Texto claro */
+  font-weight: bold;
+  transform: scale(1.05);
+}
+
+/* Botón seleccionado */
+.selectedDietTypeButton {
+  background-color: var(--azul-oscuro); /* Fondo del botón seleccionado */
+  color: var(--neutral-color); /* Texto del botón seleccionado */
+  font-weight: bold;
+  border: 1px solid var(--azul-oscuro); /* Borde consistente */
+}
+/* Botones de acción */
+.submitButton,
+.errorButton {
+  padding: 15px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.3s, background-color 0.3s;
+  width: 48%;
+}
+
+.submitButton {
+  background-color: var(--verde-claro);
+  color: var(--azul-oscuro);
+}
+
+.submitButton:hover {
+  background-color: var(--verde-claro-adicional);
+  transform: scale(1.05);
+}
+
+.errorButton {
+  background-color: var(--azul-medio);
+  color: white;
+}
+
+.errorButton:hover {
+  background-color: var(--azul-oscuro);
+  transform: scale(1.05);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .rangeDateContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dietTypeButton {
+    flex: 0 1 100%;
+  }
+
+  .container {
+    padding: 15px;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

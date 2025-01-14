@@ -227,6 +227,48 @@ body {
   }
 }
 
+.busesAndSeatsContainer {
+  display: flex;
+  gap: 20px;
+}
+
+.busesList {
+  flex: 1;
+}
+
+.seatMap {
+  flex: 2;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.seat {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #0033a0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.unavailableSeat {
+  background-color: #0033a0; /* Azul para bloqueados */
+  cursor: not-allowed;
+}
+
+.availableSeat {
+  background-color: white; /* Blanco para disponibles */
+}
+
+.selectedSeat {
+  background-color: #bdda77; /* Verde para seleccionado */
+}
+
+
+
 @media (max-width: 480px) {
   .datePicker,
   .hourContainer {

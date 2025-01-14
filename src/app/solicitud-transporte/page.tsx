@@ -18,24 +18,58 @@ import {
   ListItemText,
   Typography,
   Box,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@mui/material';
 
 const SolicitudTransporte = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedHour, setSelectedHour] = useState<string | null>(null);
-  const [selectedBus, setSelectedBus] = useState<string>('');
+  const [selectedBus, setSelectedBus] = useState<number | null>(null);
+  const [selectedSeat, setSelectedSeat] = useState<{ row: number; col: number } | null>(null);
   const [comentarios, setComentarios] = useState<string>('');
   const [archivos, setArchivos] = useState<File[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>(''); // Barra de búsqueda
+  const [tripType, setTripType] = useState<'ida' | 'vuelta' | null>(null); // Tipo de viaje
 
-  // Horas disponibles
-  const availableHours = ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
-
-  // Buses disponibles
+  // Datos de los buses
   const busesDisponibles = [
-    { bus: 'Bus 1', asientos: 5 },
-    { bus: 'Bus 2', asientos: 0 },
-    { bus: 'Bus 3', asientos: 2 },
+    {
+      id: 1,
+      bus: 'Bus 1',
+      empresa: 'Turbus',
+      asientos: [
+        [1, 1, 0, 0],
+        [1, 0, 1, 1],
+        [1, 1, 0, 0],
+        [0, 1, 1, 1],
+      ],
+    },
+    {
+      id: 2,
+      bus: 'Bus 2',
+      empresa: 'Pullman',
+      asientos: [
+        [1, 1, 1, 0],
+        [0, 0, 0, 0],
+        [1, 1, 1, 1],
+        [1, 0, 1, 1],
+      ],
+    },
+    {
+      id: 3,
+      bus: 'Bus 3',
+      empresa: 'Cikbus',
+      asientos: [
+        [1, 1, 0, 1],
+        [0, 1, 0, 1],
+        [1, 1, 1, 1],
+        [0, 0, 0, 1],
+      ],
+    },
   ];
+
+  const availableHours = ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'];
 
   // Función para manejar la carga de archivos
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -54,16 +88,21 @@ const SolicitudTransporte = () => {
   });
 
   const handleSubmit = () => {
-    if (!selectedDate || !selectedHour || !selectedBus) {
-      toast.error('Por favor selecciona una fecha, una hora y un bus disponible antes de enviar la solicitud.');
+    if (!selectedDate || !selectedHour || selectedBus === null || selectedSeat === null || !tripType) {
+      toast.error('Por favor completa todos los campos antes de enviar la solicitud.');
       return;
     }
-    toast.success(`Solicitud enviada para el ${selectedDate?.toLocaleDateString()} a las ${selectedHour}.`);
+    toast.success(
+      `Solicitud enviada para el ${selectedDate?.toLocaleDateString()} (${tripType}) a las ${selectedHour}.`
+    );
     setSelectedDate(null);
     setSelectedHour(null);
-    setSelectedBus('');
+    setSelectedBus(null);
+    setSelectedSeat(null);
     setComentarios('');
     setArchivos([]);
+    setTripType(null);
+    setSearchQuery('');
   };
 
   const handleSimulateError = () => {
@@ -76,8 +115,37 @@ const SolicitudTransporte = () => {
         <ToastContainer />
 
         <Typography variant="h4" className={styles.title}>
-          Solicitud de Modificación de Transporte
+          Modificación de Transporte
         </Typography>
+
+        {/* Barra de búsqueda */}
+        <div className={styles.formGroup}>
+          <TextField
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar trabajador..."
+            variant="outlined"
+            fullWidth
+          />
+        </div>
+
+        {/* Botones de Ida y Vuelta */}
+        <div className={styles.tripTypeContainer}>
+          <Typography variant="h6">Tipo de Viaje:</Typography>
+          <ToggleButtonGroup
+            value={tripType}
+            exclusive
+            onChange={(e, value) => setTripType(value)}
+            className={styles.toggleButtonGroup}
+          >
+            <ToggleButton value="ida" className={styles.toggleButton}>
+              Ida
+            </ToggleButton>
+            <ToggleButton value="vuelta" className={styles.toggleButton}>
+              Vuelta
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </div>
 
         <div className={styles.dateHourContainer}>
           {/* Calendario estático */}
@@ -91,15 +159,12 @@ const SolicitudTransporte = () => {
 
           {/* Contenedor de horas */}
           <Box className={styles.hourContainer}>
-            <Typography variant="h6" className={styles.subtitle}>
-              Horas Disponibles
-            </Typography>
+            <Typography variant="h6">Horas Disponibles</Typography>
             <div className={styles.hourButtons}>
               {availableHours.map((hour, index) => (
                 <Button
                   key={index}
                   variant={selectedHour === hour ? 'contained' : 'outlined'}
-                  color={selectedHour === hour ? 'success' : 'primary'}
                   onClick={() => setSelectedHour(hour)}
                   className={styles.hourButton}
                 >
@@ -108,6 +173,59 @@ const SolicitudTransporte = () => {
               ))}
             </div>
           </Box>
+        </div>
+
+        {/* Lista de buses y mapa de asientos */}
+        <div className={styles.busesAndSeatsContainer}>
+          <div className={styles.busesList}>
+            <Typography variant="h6">Buses Disponibles</Typography>
+            <List>
+              {busesDisponibles.map((bus) => (
+                <ListItem key={bus.id} disablePadding>
+                  <ListItemButton
+                    selected={selectedBus === bus.id}
+                    onClick={() => {
+                      setSelectedBus(bus.id);
+                      setSelectedSeat(null); // Reset seat selection when switching buses
+                    }}
+                  >
+                    <ListItemText
+                      primary={`${bus.bus} - ${bus.empresa}`}
+                      secondary={`Asientos disponibles: ${
+                        bus.asientos.flat().filter((seat) => seat === 1).length
+                      }`}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </div>
+
+          {/* Mapa de asientos */}
+          {selectedBus !== null && (
+            <div className={styles.seatMap}>
+              <Typography variant="h6">Mapa de Asientos</Typography>
+              <Box className={styles.grid}>
+                {busesDisponibles
+                  .find((bus) => bus.id === selectedBus)!
+                  .asientos.flatMap((fila, rowIndex) =>
+                    fila.map((seat, colIndex) => (
+                      <Box
+                        key={`${rowIndex}-${colIndex}`}
+                        className={`${styles.seat} ${
+                          seat === 0
+                            ? styles.unavailableSeat
+                            : selectedSeat?.row === rowIndex && selectedSeat?.col === colIndex
+                            ? styles.selectedSeat
+                            : styles.availableSeat
+                        }`}
+                        onClick={() => seat === 1 && setSelectedSeat({ row: rowIndex, col: colIndex })}
+                      />
+                    ))
+                  )}
+              </Box>
+            </div>
+          )}
         </div>
 
         {/* Área de comentarios */}
@@ -124,48 +242,13 @@ const SolicitudTransporte = () => {
           />
         </div>
 
-        {/* Lista de buses */}
-        <div className={styles.options}>
-          <Typography variant="h6">Buses Disponibles</Typography>
-          <List>
-            {busesDisponibles.map((bus, index) => (
-              <ListItem key={index} disablePadding>
-                <ListItemButton
-                  disabled={bus.asientos === 0}
-                  selected={selectedBus === bus.bus}
-                  onClick={() => bus.asientos > 0 && setSelectedBus(bus.bus)}
-                >
-                  <ListItemText primary={`${bus.bus} - Asientos disponibles: ${bus.asientos}`} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </div>
-
         {/* Área de carga de archivos */}
         <Box {...getRootProps()} className={`${styles.dropArea} ${isDragActive ? styles.dragOver : ''}`}>
           <input {...getInputProps()} />
           <Typography>
             {isDragActive ? 'Suelta los archivos aquí...' : 'Arrastra y suelta archivos aquí, o haz clic para seleccionar archivos'}
           </Typography>
-          <Button variant="contained" color="primary" className={styles.uploadButton}>
-            Seleccionar Archivos
-          </Button>
         </Box>
-
-        {/* Lista de archivos cargados */}
-        {archivos.length > 0 && (
-          <div className={styles.formGroup}>
-            <Typography variant="h6">Archivos Cargados:</Typography>
-            <List>
-              {archivos.map((file, index) => (
-                <ListItem key={index}>
-                  <ListItemText primary={file.name} />
-                </ListItem>
-              ))}
-            </List>
-          </div>
-        )}
 
         {/* Botones de acción */}
         <div className={styles.submitSection}>

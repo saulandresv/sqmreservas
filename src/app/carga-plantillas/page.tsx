@@ -26,8 +26,9 @@ const CargaPlantillas = () => {
         'Restricciones dietéticas no especificadas para el trabajador Juan López.',
       ]);
       setPreviewData([
-        '1, Ana Pérez, Mañana, Bus 5, Ruta A, Vegetariano',
-        '2, Juan López, Tarde, Bus 3, Ruta B, Sin restricciones',
+        '10.223.232-0, Ana Pérez, SANTIAGO CENTRO, null, Bus 5, Vegetariano',
+        '21.123.425-6, Mario Torres, LA SERENA, null, Bus 3, Sin restricciones',
+        '9.232.123-0, Juan López, LA SERENA, null, Bus 3, Sin restricciones',
       ]);
     }
   };
@@ -98,38 +99,40 @@ const CargaPlantillas = () => {
         </div>
       </div>
       
-      {/* Previsualización */}
-      <div className={styles.previewSection}>
-        <h2>Vista Previa</h2>
-        {previewData.length > 0 ? (
-          <table className={styles.previewTable}>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Turno</th>
-                <th>Bus Asignado</th>
-                <th>Recorrido</th>
-                <th>Restricciones Dietéticas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {previewData.map((row, index) => {
-                const columns = row.split(', ');
-                return (
-                  <tr key={index}>
-                    {columns.map((col, colIndex) => (
-                      <td key={colIndex}>{col}</td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        ) : (
-          <p>No hay datos para mostrar.</p>
-        )}
-      </div>
+      {/* Vista Previa */}
+<div className={styles.previewSection}>
+  <h2>Vista Previa</h2>
+  {previewData.length > 0 ? (
+    <table className={styles.previewTable}>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Región</th>
+          <th>Turno</th>
+          <th>Bus Asignado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {previewData.map((row, index) => {
+          const columns = row.split(', '); // Asegúrate de que los datos estén en este formato
+          return (
+            <tr key={index}>
+              <td>{columns[0]}</td>
+              <td>{columns[1]}</td>
+              <td>{columns[2]}</td>
+              <td>{columns[3]}</td>
+              <td>{columns[4]}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  ) : (
+    <p>No hay datos para mostrar. Por favor, carga un archivo.</p>
+  )}
+</div>
+
 
       {/* Resumen de Carga */}
       <div className={styles.summarySection}>
