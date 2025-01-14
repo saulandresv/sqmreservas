@@ -5,10 +5,10 @@ import styles from './styles.module.css';
 import { useDropzone } from 'react-dropzone';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { DayPicker, DateRange } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 
 // Importaciones de MUI
-import { LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
   TextField,
   Button,
@@ -23,7 +23,7 @@ import {
 } from '@mui/material';
 
 const SolicitudTransporte = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [selectedHour, setSelectedHour] = useState<string | null>(null);
   const [selectedBus, setSelectedBus] = useState<number | null>(null);
   const [selectedSeat, setSelectedSeat] = useState<{ row: number; col: number } | null>(null);
@@ -88,14 +88,12 @@ const SolicitudTransporte = () => {
   });
 
   const handleSubmit = () => {
-    if (!selectedDate || !selectedHour || selectedBus === null || selectedSeat === null || !tripType) {
+    if (!dateRange || !dateRange.from || !dateRange.to || !selectedHour || selectedBus === null || selectedSeat === null || !tripType) {
       toast.error('Por favor completa todos los campos antes de enviar la solicitud.');
       return;
     }
-    toast.success(
-      `Solicitud enviada para el ${selectedDate?.toLocaleDateString()} (${tripType}) a las ${selectedHour}.`
-    );
-    setSelectedDate(null);
+    toast.success(`Solicitud enviada para el rango del ${dateRange.from.toLocaleDateString()} al ${dateRange.to.toLocaleDateString()} (${tripType}) a las ${selectedHour}.`);
+    setDateRange(undefined);
     setSelectedHour(null);
     setSelectedBus(null);
     setSelectedSeat(null);
@@ -110,157 +108,152 @@ const SolicitudTransporte = () => {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <div className={styles.container}>
-        <ToastContainer />
+    <div className={styles.container}>
+      <ToastContainer />
 
-        <Typography variant="h4" className={styles.title}>
-          Modificación de Transporte
-        </Typography>
+      <Typography variant="h4" className={styles.title}>
+        Modificación de Transporte
+      </Typography>
 
-        {/* Barra de búsqueda */}
-        <div className={styles.formGroup}>
-          <TextField
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar trabajador..."
-            variant="outlined"
-            fullWidth
-          />
-        </div>
-
-        {/* Botones de Ida y Vuelta */}
-        <div className={styles.tripTypeContainer}>
-          <Typography variant="h6">Tipo de Viaje:</Typography>
-          <ToggleButtonGroup
-            value={tripType}
-            exclusive
-            onChange={(e, value) => setTripType(value)}
-            className={styles.toggleButtonGroup}
-          >
-            <ToggleButton value="ida" className={styles.toggleButton}>
-              Ida
-            </ToggleButton>
-            <ToggleButton value="vuelta" className={styles.toggleButton}>
-              Vuelta
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </div>
-
-        <div className={styles.dateHourContainer}>
-          {/* Calendario estático */}
-          <Box className={styles.datePicker}>
-            <StaticDatePicker
-              displayStaticWrapperAs="desktop"
-              value={selectedDate}
-              onChange={(newValue) => setSelectedDate(newValue)}
-            />
-          </Box>
-
-          {/* Contenedor de horas */}
-          <Box className={styles.hourContainer}>
-            <Typography variant="h6">Horas Disponibles</Typography>
-            <div className={styles.hourButtons}>
-              {availableHours.map((hour, index) => (
-                <Button
-                  key={index}
-                  variant={selectedHour === hour ? 'contained' : 'outlined'}
-                  onClick={() => setSelectedHour(hour)}
-                  className={styles.hourButton}
-                >
-                  {hour}
-                </Button>
-              ))}
-            </div>
-          </Box>
-        </div>
-
-        {/* Lista de buses y mapa de asientos */}
-        <div className={styles.busesAndSeatsContainer}>
-          <div className={styles.busesList}>
-            <Typography variant="h6">Buses Disponibles</Typography>
-            <List>
-              {busesDisponibles.map((bus) => (
-                <ListItem key={bus.id} disablePadding>
-                  <ListItemButton
-                    selected={selectedBus === bus.id}
-                    onClick={() => {
-                      setSelectedBus(bus.id);
-                      setSelectedSeat(null); // Reset seat selection when switching buses
-                    }}
-                  >
-                    <ListItemText
-                      primary={`${bus.bus} - ${bus.empresa}`}
-                      secondary={`Asientos disponibles: ${
-                        bus.asientos.flat().filter((seat) => seat === 1).length
-                      }`}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </div>
-
-          {/* Mapa de asientos */}
-          {selectedBus !== null && (
-            <div className={styles.seatMap}>
-              <Typography variant="h6">Mapa de Asientos</Typography>
-              <Box className={styles.grid}>
-                {busesDisponibles
-                  .find((bus) => bus.id === selectedBus)!
-                  .asientos.flatMap((fila, rowIndex) =>
-                    fila.map((seat, colIndex) => (
-                      <Box
-                        key={`${rowIndex}-${colIndex}`}
-                        className={`${styles.seat} ${
-                          seat === 0
-                            ? styles.unavailableSeat
-                            : selectedSeat?.row === rowIndex && selectedSeat?.col === colIndex
-                            ? styles.selectedSeat
-                            : styles.availableSeat
-                        }`}
-                        onClick={() => seat === 1 && setSelectedSeat({ row: rowIndex, col: colIndex })}
-                      />
-                    ))
-                  )}
-              </Box>
-            </div>
-          )}
-        </div>
-
-        {/* Área de comentarios */}
-        <div className={styles.formGroup}>
-          <Typography variant="h6">Comentarios Adicionales:</Typography>
-          <TextField
-            value={comentarios}
-            onChange={(e) => setComentarios(e.target.value)}
-            placeholder="Escribe aquí cualquier comentario adicional..."
-            multiline
-            rows={4}
-            variant="outlined"
-            fullWidth
-          />
-        </div>
-
-        {/* Área de carga de archivos */}
-        <Box {...getRootProps()} className={`${styles.dropArea} ${isDragActive ? styles.dragOver : ''}`}>
-          <input {...getInputProps()} />
-          <Typography>
-            {isDragActive ? 'Suelta los archivos aquí...' : 'Arrastra y suelta archivos aquí, o haz clic para seleccionar archivos'}
-          </Typography>
-        </Box>
-
-        {/* Botones de acción */}
-        <div className={styles.submitSection}>
-          <button className={styles.submitButton} onClick={handleSubmit}>
-            Enviar Solicitud
-          </button>
-          <button className={styles.errorButton} onClick={handleSimulateError}>
-            Simular Error al Enviar Solicitud
-          </button>
-        </div>
+      {/* Barra de búsqueda */}
+      <div className={styles.formGroup}>
+        <TextField
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Buscar trabajador..."
+          variant="outlined"
+          fullWidth
+        />
       </div>
-    </LocalizationProvider>
+
+      {/* Botones de Ida y Vuelta */}
+      <div className={styles.tripTypeContainer}>
+        <Typography variant="h6">Tipo de Viaje:</Typography>
+        <ToggleButtonGroup
+          value={tripType}
+          exclusive
+          onChange={(e, value) => setTripType(value)}
+          className={styles.toggleButtonGroup}
+        >
+          <ToggleButton value="ida" className={styles.toggleButton}>
+            Ida
+          </ToggleButton>
+          <ToggleButton value="vuelta" className={styles.toggleButton}>
+            Vuelta
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </div>
+
+      <div className={styles.dateHourContainer}>
+        {/* Reemplazo del calendario */}
+          <DayPicker
+            mode="range"
+            selected={dateRange}
+            onSelect={setDateRange}
+          />
+        {/* Contenedor de horas */}
+        <Box className={styles.hourContainer}>
+          <Typography variant="h6">Horas Disponibles</Typography>
+          <div className={styles.hourButtons}>
+            {availableHours.map((hour, index) => (
+              <Button
+                key={index}
+                variant={selectedHour === hour ? 'contained' : 'outlined'}
+                onClick={() => setSelectedHour(hour)}
+                className={styles.hourButton}
+              >
+                {hour}
+              </Button>
+            ))}
+          </div>
+        </Box>
+      </div>
+
+      {/* Lista de buses y mapa de asientos */}
+      <div className={styles.busesAndSeatsContainer}>
+        <div className={styles.busesList}>
+          <Typography variant="h6">Buses Disponibles</Typography>
+          <List>
+            {busesDisponibles.map((bus) => (
+              <ListItem key={bus.id} disablePadding>
+                <ListItemButton
+                  selected={selectedBus === bus.id}
+                  onClick={() => {
+                    setSelectedBus(bus.id);
+                    setSelectedSeat(null); // Reset seat selection when switching buses
+                  }}
+                >
+                  <ListItemText
+                    primary={`${bus.bus} - ${bus.empresa}`}
+                    secondary={`Asientos disponibles: ${
+                      bus.asientos.flat().filter((seat) => seat === 1).length
+                    }`}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </div>
+
+        {/* Mapa de asientos */}
+        {selectedBus !== null && (
+          <div className={styles.seatMap}>
+            <Typography variant="h6">Mapa de Asientos</Typography>
+            <Box className={styles.grid}>
+              {busesDisponibles
+                .find((bus) => bus.id === selectedBus)!
+                .asientos.flatMap((fila, rowIndex) =>
+                  fila.map((seat, colIndex) => (
+                    <Box
+                      key={`${rowIndex}-${colIndex}`}
+                      className={`${styles.seat} ${
+                        seat === 0
+                          ? styles.unavailableSeat
+                          : selectedSeat?.row === rowIndex && selectedSeat?.col === colIndex
+                          ? styles.selectedSeat
+                          : styles.availableSeat
+                      }`}
+                      onClick={() => seat === 1 && setSelectedSeat({ row: rowIndex, col: colIndex })}
+                    />
+                  ))
+                )}
+            </Box>
+          </div>
+        )}
+      </div>
+
+      {/* Área de comentarios */}
+      <div className={styles.formGroup}>
+        <Typography variant="h6">Comentarios Adicionales:</Typography>
+        <TextField
+          value={comentarios}
+          onChange={(e) => setComentarios(e.target.value)}
+          placeholder="Escribe aquí cualquier comentario adicional..."
+          multiline
+          rows={4}
+          variant="outlined"
+          fullWidth
+        />
+      </div>
+
+      {/* Área de carga de archivos */}
+      <Box {...getRootProps()} className={`${styles.dropArea} ${isDragActive ? styles.dragOver : ''}`}>
+        <input {...getInputProps()} />
+        <Typography>
+          {isDragActive ? 'Suelta los archivos aquí...' : 'Arrastra y suelta archivos aquí, o haz clic para seleccionar archivos'}
+        </Typography>
+      </Box>
+
+      {/* Botones de acción */}
+      <div className={styles.submitSection}>
+        <button className={styles.submitButton} onClick={handleSubmit}>
+          Enviar Solicitud
+        </button>
+        <button className={styles.errorButton} onClick={handleSimulateError}>
+          Simular Error al Enviar Solicitud
+        </button>
+      </div>
+    </div>
   );
 };
 
